@@ -3,7 +3,7 @@
 """
 Author: shashial
 Language: Python 2.7
-Задание: MVC book management system
+Task: MVC book management system
 
 Library book control system. Library has books and users.
 Library rools:
