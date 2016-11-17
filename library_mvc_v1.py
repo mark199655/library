@@ -44,7 +44,7 @@ class Model():
   """
   def get_books(self):
     """
-    get books list
+    get list of books
     """
     books = []
     for book in bookz:
@@ -53,39 +53,58 @@ class Model():
 
   def get_users(self):
     """
-    get user list
+    get list of users
     """
     users = []
     for user in userz:
       users.append(user)
     return users
 
-  def take_book(self, uname, book):
+  def user_exists(self, uname):
     """
-    take a book from library: 
-    1.Check if user exists
-    2.Check users ammount of books taken
-    3.Check if book in library
-    4.Give a book:remove from library, add it to user
+    checks if user exists
     """
-
-    #check if user exists
     users = main_model.get_users()
     if uname in users:
       main_view.print_found(uname)
     else:
       main_view.print_not_found(uname)
 
-    #check users ammout of books taken
-    if (len(eval(uname))) >=3:
-      main_view.print_book_limit()
-
-    #check if a book in library
+  def book_in_library(self, book):
+    """
+    checks if a book in the library
+    """
     books = main_model.get_books()
     if book in books:
       main_view.print_found(book)
     else:
       main_view.print_not_found(book)
+
+  def book_in_user(self, uname, book):
+    """
+    check if the user has the book
+    """
+    user_books = []
+    for i,k in eval(uname).iteritems():
+      user_books.append(i)
+    if book in user_books:
+      main_view.print_found(book)
+    else:
+      main_view.print_not_found(book)
+
+  def take_book(self, uname, book):
+    """
+    take a book from library: 
+    """
+    #check if user exists
+    main_model.user_exists(uname)
+
+    #check users ammout of books taken
+    if (len(eval(uname))) >=3:
+      main_view.print_book_limit()
+
+    #check if book in library
+    main_model.book_in_library(book)
 
     #give a book to a user, add date
     bookz.remove(book)
@@ -97,25 +116,12 @@ class Model():
   def give_book(self, uname, book):
     """
     give a book to a user
-    1)check if the user exists
-    2)check if the user has the book
-    3)take a book from user, add it to the library
     """
-    #check if user exists
-    users = main_model.get_users()
-    if uname in users:
-      main_view.print_found(uname)
-    else:
-      main_view.print_not_found(uname)
+    #check if the user exists
+    main_model.user_exists(uname)
 
     #check if the user has the book
-    user_books = []
-    for i,k in eval(uname).iteritems():
-      user_books.append(i)
-    if book in user_books:
-      main_view.print_found(book)
-    else:
-      main_view.print_not_found(book)
+    main_model.book_in_user(uname, book)
 
     #take a book from user, add it to the library
     eval(uname).pop(book)
@@ -169,17 +175,17 @@ class View():
     print('\nIn order to take or return a book, you have to tell me your username and a book title:\n')
 
   def print_found(self, entity):
-    print('\n{} found!').format(entity)
+    print('\n{} found!'.format(entity))
 
   def print_not_found(self, entity):
-    print('\nNo {}, sorry!\n').format(entity)
+    print('\nNo {}, sorry!\n'.format(entity))
     main_control.handler(main_control.wait())
 
   def print_book_taken(self, user, book):
-    print('\n{} was successfully taken by {}\n').format(book, user)
+    print('\n{} was successfully taken by {}\n'.format(book, user))
 
   def print_book_returned(self, user, book):
-    print('\n{} was successfully returned by {}\n').format(book, user)
+    print('\n{} was successfully returned by {}\n'.format(book, user))
 
   def print_book_limit(self):
     print('User has reached book limit, sorry!\n')
@@ -238,9 +244,3 @@ main_model = Model()
 
 #main: pass control to the controller
 main_control.handler(0)
-
-'''
-user_books = []
-for i,k in eval(uname).iteritems():
-user_books.append(i)
-'''
