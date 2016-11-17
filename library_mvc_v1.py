@@ -1,32 +1,13 @@
 # -*- coding: utf-8 -*-
 
-"""
-Author: shashial
-Language: Python 2.7
-Task: MVC book management system
+# Script Name   : library_mvc_v1.py
+# Author        : shashial
+# Description   : Book management system using MVC
 
-Library book control system. Library has books and users.
-Library rools:
-1)There is only one entity of book in the system.
-2)User is limited to three boks at the current perion of time.
-3)User can hold a book for no longer than a month.
-
-I have to develop a system, which has these functions:
-1. Print list of books in the library.
-2. Print list of users.
-3. Give a book to a user.
-4. Take a book from user.
-5. Print list of user with expired books.
-
-System has to be implemented in the MVC way.
-"""
-
-#to track book give out time
 import datetime
 
-'''
-hardcoded initial 'database' 
-'''
+#hardcoded initial 'database' 
+
 #list of books
 bookz = ['book1', 'book2', 'book3', 'book4', 'book5', 'book6', 'book7', 'book8', 'book9', 'book10', 'book11']
 #list of users
