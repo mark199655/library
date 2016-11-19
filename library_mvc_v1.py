@@ -7,7 +7,6 @@
 import datetime
 
 #hardcoded initial 'database' 
-
 #list of books
 bookz = ['book1', 'book2', 'book3', 'book4', 'book5', 'book6', 'book7', 'book8', 'book9', 'book10', 'book11']
 #list of users
@@ -18,28 +17,24 @@ user2 = {}
 user3 = {'book14':'2016-11-15'}
 user4 = {'book15':'2016-11-15', 'book16':'2016-10-14', 'book17':'2016-10-14'}
 
-class Model():
+class Model:
   """
   model is called by controller and calls view
   model looks after overall logic, every action is done with model involved
   """
+  book_limit = 3
+
   def get_books(self):
     """
     get list of books
     """
-    books = []
-    for book in bookz:
-      books.append(book)
-    return books
+    return [book for book in bookz]
 
   def get_users(self):
     """
     get list of users
     """
-    users = []
-    for user in userz:
-      users.append(user)
-    return users
+    return [user for user in userz]
 
   def user_exists(self, uname):
     """
@@ -81,7 +76,7 @@ class Model():
     main_model.user_exists(uname)
 
     #check users ammout of books taken
-    if (len(eval(uname))) >=3:
+    if (len(eval(uname))) >= main_model.book_limit:
       main_view.print_book_limit()
 
     #check if book in library
@@ -133,12 +128,14 @@ class Model():
     #print list of user with at least 1 expired book
     main_view.print_users(ex_users)
 
-class View():
+class View:
   """
   View is used to create all the output of a programm
   """
   def print_CLI(self):
-    print('you wanna play my lil library game, %username%?\n0. Menu\n1. Books available\n2. Users available\n3. Take a book \n4. Return a book \n5. List users with expired books\n6. Exit\n')
+    print('''you wanna play my lil library game, %username%?\n
+0. Menu\n1. Books available\n2. Users available\n3. Take a book 
+4. Return a book \n5. List users with expired books\n6. Exit\n''')
 
   def print_books(self, books):
     print('\nBooks available:\n')
@@ -172,7 +169,7 @@ class View():
     print('User has reached book limit, sorry!\n')
     main_control.handler(main_control.wait())
 
-class Controller():
+class Controller:
   """
   controller is used to pass all user input from view to model
   """
