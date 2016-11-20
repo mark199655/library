@@ -1,7 +1,7 @@
 # MVC book management system: library
 
 
-Library has books and users. It's rools:
+Library has books and users. It's rules:
 - There is only one entity of book in the system.
 - User is limited to three boks at the current perion of time.
 - User can hold a book for no longer than a month.
