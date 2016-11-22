@@ -19,7 +19,7 @@ user3 = {'book14':'2016-11-15'}
 user4 = {'book15':'2016-11-15', 'book16':'2016-10-14', 'book17':'2016-10-14'}
 
 class Model:
-  """c
+  """
   model is called by controller and calls view
   model looks after overall logic, every action is done with model involved
   """
@@ -117,10 +117,15 @@ class Model:
 
 class View:
   """iew is used to create all the output of a programm"""
-  def print_CLI(self):
-    print('''you wanna play my lil library game, %username%?\n
-0. Menu\n1. Books available\n2. Users available\n3. Take a book 
-4. Return a book \n5. List users with expired books\n6. Exit\n''')
+  def __init__(self):
+    self.cli_menu = ("Menu", "Books available", "Users available", "Take a book", "Return a book", "List users with expired books", "Credits", "Exit")
+  
+  def print_cli(self):
+    counter = 0;
+    for i in range(0, len(main_view.cli_menu)):
+      print(str(counter)+'. '+main_view.cli_menu[i])
+      counter+=1
+    print("\n")
 
   def print_books(self, books):
     print('\nBooks available:\n')
@@ -154,6 +159,16 @@ class View:
     print('User has reached book limit, sorry!\n')
     main_control.handler(main_control.wait())
 
+  def print_credits(self):
+    print("\n")
+    print("+----------------------------------------------------------------------------+")
+    print("|                                   Library v1                               |")
+    print("+----------------------------------------------------------------------------+")
+    print("|                              Developed by shashial.                        |")
+    print("|                                   Pattern:MVC                              |")
+    print("+----------------------------------------------------------------------------+")
+    print("\n")
+
 
 
 class Controller:
@@ -171,7 +186,7 @@ class Controller:
   def handler(self, action_num):
     """this method handles user input"""
     if action_num == 0:
-      main_view.print_CLI()
+      main_view.print_cli()
     elif action_num == 1:
       main_view.print_books(main_model.get_books())
     elif action_num == 2:
@@ -189,8 +204,10 @@ class Controller:
     elif action_num == 5:
       main_model.give_expired_list()
     elif action_num == 6:
+      main_view.print_credits()
+    elif action_num == 7:
       exit()
-
+      
     #and pass control to controller again, untill user press exit.
     main_control.handler(main_control.wait())
 
@@ -201,4 +218,5 @@ main_control = Controller()
 main_model = Model()
 
 #main: pass control to the controller
+main_view.print_credits()
 main_control.handler(0)
