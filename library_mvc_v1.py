@@ -3,7 +3,7 @@
 
 # Script Name   : library_mvc_v1.py
 # Author        : shashial
-# Description   : Book management system using MVC
+# Description   : Book management system using MVC + SOLID
 
 import datetime
 
@@ -19,28 +19,22 @@ user3 = {'book14':'2016-11-15'}
 user4 = {'book15':'2016-11-15', 'book16':'2016-10-14', 'book17':'2016-10-14'}
 
 class Model:
-  """
+  """c
   model is called by controller and calls view
   model looks after overall logic, every action is done with model involved
   """
-  book_limit = 3
-
+  def __init__(self):
+    self.book_limit = 3
   def get_books(self):
-    """
-    get list of books
-    """
+    """get list of books"""
     return [book for book in bookz]
 
   def get_users(self):
-    """
-    get list of users
-    """
+    """get list of users"""
     return [user for user in userz]
 
   def user_exists(self, uname):
-    """
-    checks if user exists
-    """
+    """checks if user exists"""
     users = main_model.get_users()
     if uname in users:
       main_view.print_found(uname)
@@ -48,19 +42,15 @@ class Model:
       main_view.print_not_found(uname)
 
   def book_in_library(self, book):
-    """
-    checks if a book in the library
-    """
+    """checks if a book in the library"""
     books = main_model.get_books()
     if book in books:
       main_view.print_found(book)
     else:
-      main_view.print_not_found(book)
+      main_view.print_not_found(book) 
 
   def book_in_user(self, uname, book):
-    """
-    check if the user has the book
-    """
+    """check if the user has the book"""
     user_books = []
     for i,k in eval(uname).iteritems():
       user_books.append(i)
@@ -70,9 +60,7 @@ class Model:
       main_view.print_not_found(book)
 
   def take_book(self, uname, book):
-    """
-    take a book from library: 
-    """
+    """take a book from library"""
     #check if user exists
     main_model.user_exists(uname)
 
@@ -91,9 +79,7 @@ class Model:
     main_view.print_book_taken(uname, book)
 
   def give_book(self, uname, book):
-    """
-    give a book to a user
-    """
+    """give a book to a user"""
     #check if the user exists
     main_model.user_exists(uname)
 
@@ -130,9 +116,7 @@ class Model:
     main_view.print_users(ex_users)
 
 class View:
-  """
-  View is used to create all the output of a programm
-  """
+  """iew is used to create all the output of a programm"""
   def print_CLI(self):
     print('''you wanna play my lil library game, %username%?\n
 0. Menu\n1. Books available\n2. Users available\n3. Take a book 
@@ -170,14 +154,12 @@ class View:
     print('User has reached book limit, sorry!\n')
     main_control.handler(main_control.wait())
 
+
+
 class Controller:
-  """
-  controller is used to pass all user input from view to model
-  """
+  """controller is used to pass all user input from view to model"""
   def wait(self):
-    """
-    wait for a numeric input from a user
-    """
+    """wait for a numeric input from a user"""
     while True:
       try:
         action_num = int(raw_input('Choose your action(number only):'))
@@ -187,9 +169,7 @@ class Controller:
     return action_num
 
   def handler(self, action_num):
-    """
-    this method handles user input: it desides which actions to do in case of different situations
-    """
+    """this method handles user input"""
     if action_num == 0:
       main_view.print_CLI()
     elif action_num == 1:
@@ -213,7 +193,6 @@ class Controller:
 
     #and pass control to controller again, untill user press exit.
     main_control.handler(main_control.wait())
-
 
 
 #initialize objects
