@@ -8,15 +8,15 @@
 import datetime
 
 #hardcoded initial 'database' 
-#list of books
+#list of books at the library
 bookz = ['book1', 'book2', 'book3', 'book4', 'book5', 'book6', 'book7', 'book8', 'book9', 'book10', 'book11']
-#list of users
-userz = ['user1', 'user2', 'user3', 'user4']
-#dictionaries with corresponded users, dates and books
-user1 = {'book12':'2016-11-15', 'book13':'2016-10-14'}
-user2 = {}
-user3 = {'book14':'2016-11-15'}
-user4 = {'book15':'2016-11-15', 'book16':'2016-10-14', 'book17':'2016-10-14'}
+#list of users and corresponding books
+userz = {
+'user1':{'book12':'2016-11-15', 'book13':'2016-10-14'},
+'user2':{},
+'user3':{'book14':'2016-11-15'},
+'user4':{'book15':'2016-11-15', 'book16':'2016-10-14', 'book17':'2016-10-14'}
+}
 
 class Model:
   """
@@ -31,7 +31,7 @@ class Model:
 
   def get_users(self):
     """get list of users"""
-    return [user for user in userz]
+    return [user for user, books in userz.iteritems()]
 
   def user_exists(self, uname):
     """checks if user exists"""
@@ -52,7 +52,7 @@ class Model:
   def book_in_user(self, uname, book):
     """check if the user has the book"""
     user_books = []
-    for i,k in eval(uname).iteritems():
+    for i,k in userz[uname].iteritems():
       user_books.append(i)
     if book in user_books:
       main_view.print_found(book)
@@ -65,7 +65,7 @@ class Model:
     main_model.user_exists(uname)
 
     #check users ammout of books taken
-    if (len(eval(uname))) >= main_model.book_limit:
+    if (len(userz[uname])) >= main_model.book_limit:
       main_view.print_book_limit()
 
     #check if book in library
@@ -73,7 +73,7 @@ class Model:
 
     #give a book to a user, add date
     bookz.remove(book)
-    eval(uname)[book] = str(datetime.datetime.now().date())
+    userz[uname][book] = str(datetime.datetime.now().date())
 
     #print success message
     main_view.print_book_taken(uname, book)
@@ -87,7 +87,7 @@ class Model:
     main_model.book_in_user(uname, book)
 
     #take a book from user, add it to the library
-    eval(uname).pop(book)
+    userz[uname].pop(book)
     bookz.append(book)
 
     #print success message
@@ -104,12 +104,12 @@ class Model:
     now = datetime.datetime.now().date()
 
     #check date for every book
-    for user in userz:
-      for i,k in eval(user).iteritems():
-        book_time = datetime.datetime.strptime(k, "%Y-%m-%d").date()
+    for i, k in userz.iteritems():
+      for j, b in k.iteritems():
+        book_time = datetime.datetime.strptime(b, "%Y-%m-%d").date()
         #if the book is expired(differens is more than 31 days) then add user to naughty list
         if (abs(now-book_time).days) > 31:
-          ex_users.append(user)
+          ex_users.append(i)
     #user must be unique
     ex_users = set(ex_users)
     #print list of user with at least 1 expired book
@@ -141,7 +141,7 @@ class View:
     print('\n')
 
   def print_users(self, users):
-    print('\nUsers available:\n')
+    print('\nUsers match criteria:\n')
     for i in users:
       print(i)
     print(' ')
