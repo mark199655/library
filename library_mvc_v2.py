@@ -124,13 +124,14 @@ class Model:
 class View:
   """iew is used to create all the output of a programm"""
   def __init__(self):
-    self.cli_menu = ("Menu", "Books available", "Users available", "Take a book", "Return a book", "List users with expired books", "Credits", "Exit")
+    self.cli_menu = ("Menu", "Books available", "Users available", "Take a book", "Return a book", "List users with expired books", "Choose Database", "About", "Exit")
+    self.input_menu = ("Show instructions", "File_1", "File_2", "Buildin 'database'", "Exit")
   
-  def print_cli(self):
+  def print_cli(self, menu):
     counter = 0;
     print("\n")
-    for i in range(0, len(main_view.cli_menu)):
-      print(str(counter)+'. '+main_view.cli_menu[i])
+    for i in range(0, len(menu)):
+      print(str(counter)+'. '+menu[i])
       counter+=1
     print("\n")
 
@@ -166,7 +167,8 @@ class View:
     print('User has reached book limit, sorry!\n')
     main_control.handler(main_control.wait())
 
-  def print_credits(self):
+  def print_about(self):
+    """prints 'about' """
     print("\n")
     print("+----------------------------------------------------------------------------+")
     print("|                                   Library v2                               |")
@@ -175,13 +177,6 @@ class View:
     print("|                             Pattern:MVC using SOLID                        |")
     print("+----------------------------------------------------------------------------+")
     print("\n")
-
-  def print_input_menu(self):
-    print('\nPlease, choose input source:')
-    print('0. Show instructions again')
-    print('1. File_1')
-    print('2. File_2')
-    print('3. Buildin DB')
 
 
 class Controller:
@@ -202,7 +197,7 @@ class Controller:
   def handler(self, action_num):
     """handles user input in the main menu"""
     if action_num == 0:
-      main_view.print_cli()
+      main_view.print_cli(main_view.cli_menu)
     elif action_num == 1:
       main_view.print_books(main_model.get_books())
     elif action_num == 2:
@@ -220,23 +215,26 @@ class Controller:
     elif action_num == 5:
       main_model.give_expired_list()
     elif action_num == 6:
-      main_view.print_credits()
+      main_control.input_handler(0)
     elif action_num == 7:
+      main_view.print_about()
+    elif action_num == 8:
       exit()
-
     #and pass control to controller again, untill user press exit.
     main_control.handler(main_control.wait())
 
   def input_handler(self, input_num):
     """handles user input in the input menu"""
     if input_num == 0:
-      main_view.print_input_menu()
+      main_view.print_cli(main_view.input_menu)
     if input_num == 1:
       main_control.handler(0)
     elif input_num == 2:
       main_control.handler(0)
     elif input_num == 3:
       main_control.handler(0)
+    elif input_num == 4:
+      exit()
     main_control.input_handler(main_control.wait())
 
 
@@ -246,5 +244,5 @@ main_control = Controller()
 main_model = Model()
 
 #main: pass control to the controller
-main_view.print_credits()
+main_view.print_about()
 main_control.input_handler(0)
