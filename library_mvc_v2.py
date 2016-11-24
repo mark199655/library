@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 # Script Name   : library_mvc_v1.py
 # Author        : shashial
@@ -7,6 +6,7 @@
 
 import datetime
 import pickle
+import json
 
 #hardcoded initial 'database' 
 #list of books at the library
@@ -18,8 +18,7 @@ db_users = {
 'user3':{'book14':'2016-11-15'},
 'user4':{'book15':'2016-11-15', 'book16':'2016-10-14', 'book17':'2016-10-14'}
 }
-bookz = []
-userz = {}
+
 class Model:
   """
   model is called by controller and calls view
@@ -27,14 +26,16 @@ class Model:
   """
   def __init__(self):
     self.book_limit = 3
+    self.bookz = []
+    self.userz = {}
 
   def get_books(self):
     """get list of books"""
-    return [book for book in bookz]
+    return [book for book in self.bookz]
 
   def get_users(self):
     """get list of users"""
-    return [user for user, books in userz.iteritems()]
+    return [user for user, books in self.userz.iteritems()]
 
   def user_exists(self, uname):
     """checks if user exists"""
@@ -55,7 +56,7 @@ class Model:
   def book_in_user(self, uname, book):
     """check if the user has the book"""
     user_books = []
-    for i,k in userz[uname].iteritems():
+    for i,k in self.userz[uname].iteritems():
       user_books.append(i)
     if book in user_books:
       main_view.print_found(book)
@@ -68,15 +69,15 @@ class Model:
     main_model.user_exists(uname)
 
     #check users ammout of books taken
-    if (len(userz[uname])) >= main_model.book_limit:
+    if (len(self.userz[uname])) >= main_model.book_limit:
       main_view.print_book_limit()
 
     #check if book in library
     main_model.book_in_library(book)
 
     #give a book to a user, add date
-    bookz.remove(book)
-    userz[uname][book] = str(datetime.datetime.now().date())
+    self.bookz.remove(book)
+    self.userz[uname][book] = str(datetime.datetime.now().date())
 
     #print success message
     main_view.print_book_taken(uname, book)
@@ -90,8 +91,8 @@ class Model:
     main_model.book_in_user(uname, book)
 
     #take a book from user, add it to the library
-    userz[uname].pop(book)
-    bookz.append(book)
+    self.userz[uname].pop(book)
+    self.bookz.append(book)
 
     #print success message
     main_view.print_book_returned(uname, book)
@@ -107,7 +108,7 @@ class Model:
     now = datetime.datetime.now().date()
 
     #check date for every book
-    for i, k in userz.iteritems():
+    for i, k in self.userz.iteritems():
       for j, b in k.iteritems():
         book_time = datetime.datetime.strptime(b, "%Y-%m-%d").date()
         #if the book is expired(differens is more than 31 days) then add user to naughty list
@@ -120,9 +121,6 @@ class Model:
 
   def pickle_input(self, f_uname, f_bname):
     ''' use pickle file as input '''
-    global bookz
-    global userz
-
     while True:
       try:
         users_file = open(f_uname, 'rb')
@@ -132,28 +130,40 @@ class Model:
         print('No such file, please, try again')
         main_control.input_handler(main_control.wait())
 
-    userz = pickle.load(users_file)
-    bookz = pickle.load(books_file)
+    self.userz = pickle.load(users_file)
+    self.bookz = pickle.load(books_file)
 
     users_file.close()
     books_file.close()
 
-  def json__input(self, f_uame, f_bname):
+  def json_input(self, f_uname, f_bname):
     ''' use json file as input '''
-    pass
+    while True:
+      try:
+        users_file = open(f_uname)
+        books_file = open(f_bname)
+        break
+      except IOError:
+        print('No such file, please, try again')
+        main_control.input_handler(main_control.wait())
+
+    self.userz = json.load(users_file)
+    self.bookz = json.load(books_file)
+
+    users_file.close()
+    books_file.close()
+    
 
   def db_input(self, dbname):
     ''' use local "database" as input '''
-    global bookz
-    global userz
-    bookz = db_books
-    userz = db_users
+    self.bookz = db_books
+    self.userz = db_users
 
 class View:
   """iew is used to create all the output of a programm"""
   def __init__(self):
     self.cli_menu = ("Menu", "Books available", "Users available", "Take a book", "Return a book", "List users with expired books", "Choose Database", "About", "Exit")
-    self.input_menu = ("Show instructions", "File_1", "File_2", "Buildin 'database'", "Exit")
+    self.input_menu = ("Show instructions", "File_1(pickle)", "File_2(json)", "Buildin 'database'(list)", "Exit")
   
   def print_cli(self, menu):
     counter = 0;
@@ -259,7 +269,7 @@ class Controller:
       main_model.pickle_input('file_1.txt', 'books_1.txt')
       main_control.handler(0)
     elif input_num == 2:
-      main_model.pickle_input('file_2.txt', 'books_2.txt')
+      main_model.json_input('file_2.txt', 'books_2.txt')
       main_control.handler(0)
     elif input_num == 3:
       main_model.db_input('main_db')
