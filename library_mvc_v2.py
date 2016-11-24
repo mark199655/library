@@ -6,18 +6,20 @@
 # Description   : Book management system using MVC + SOLID
 
 import datetime
+import pickle
 
 #hardcoded initial 'database' 
 #list of books at the library
-bookz = ['book1', 'book2', 'book3', 'book4', 'book5', 'book6', 'book7', 'book8', 'book9', 'book10', 'book11']
+db_books = ['book14', 'book88', 'book3', 'book4', 'book5', 'book6', 'book7', 'book8', 'book9', 'book10', 'book1']
 #list of users and corresponding books
-userz = {
+db_users = {
 'user1':{'book12':'2016-11-15', 'book13':'2016-10-14'},
 'user2':{},
 'user3':{'book14':'2016-11-15'},
 'user4':{'book15':'2016-11-15', 'book16':'2016-10-14', 'book17':'2016-10-14'}
 }
-
+bookz = []
+userz = {}
 class Model:
   """
   model is called by controller and calls view
@@ -25,6 +27,7 @@ class Model:
   """
   def __init__(self):
     self.book_limit = 3
+
   def get_books(self):
     """get list of books"""
     return [book for book in bookz]
@@ -115,11 +118,36 @@ class Model:
     #print list of user with at least 1 expired book
     main_view.print_users(ex_users)
 
-  def file_input(self, fname):
+  def pickle_input(self, f_uname, f_bname):
+    ''' use pickle file as input '''
+    global bookz
+    global userz
+
+    while True:
+      try:
+        users_file = open(f_uname, 'rb')
+        books_file = open(f_bname, 'rb')
+        break
+      except IOError:
+        print('No such file, please, try again')
+        main_control.input_handler(main_control.wait())
+
+    userz = pickle.load(users_file)
+    bookz = pickle.load(books_file)
+
+    users_file.close()
+    books_file.close()
+
+  def json__input(self, f_uame, f_bname):
+    ''' use json file as input '''
     pass
 
-  def array_input(self, ):
-    pass
+  def db_input(self, dbname):
+    ''' use local "database" as input '''
+    global bookz
+    global userz
+    bookz = db_books
+    userz = db_users
 
 class View:
   """iew is used to create all the output of a programm"""
@@ -228,10 +256,13 @@ class Controller:
     if input_num == 0:
       main_view.print_cli(main_view.input_menu)
     if input_num == 1:
+      main_model.pickle_input('file_1.txt', 'books_1.txt')
       main_control.handler(0)
     elif input_num == 2:
+      main_model.pickle_input('file_2.txt', 'books_2.txt')
       main_control.handler(0)
     elif input_num == 3:
+      main_model.db_input('main_db')
       main_control.handler(0)
     elif input_num == 4:
       exit()
