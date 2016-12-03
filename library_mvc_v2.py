@@ -97,7 +97,6 @@ class Model:
     #print success message
     main_view.print_book_returned(uname, book)
 
-
   def give_expired_list(self):
     """
     Print list of the users with expired books.
@@ -151,8 +150,7 @@ class Model:
     self.bookz = json.load(books_file)
 
     users_file.close()
-    books_file.close()
-    
+    books_file.close()  
 
   def db_input(self, dbname):
     ''' use local "database" as input '''
@@ -243,12 +241,12 @@ class Controller:
     elif action_num == 3:
       main_view.print_requirements()
       uname = raw_input('Your username: ')
-      book = raw_input('Book: ')
+      book = raw_input('Book title: ')
       main_model.take_book(uname, book)
     elif action_num == 4:
       main_view.print_requirements()
       uname = raw_input('Your username: ')
-      book = raw_input('Book: ')
+      book = raw_input('Book title: ')
       main_model.give_book(uname, book)
     elif action_num == 5:
       main_model.give_expired_list()
@@ -266,10 +264,10 @@ class Controller:
     if input_num == 0:
       main_view.print_cli(main_view.input_menu)
     if input_num == 1:
-      main_model.pickle_input('file_1.txt', 'books_1.txt')
+      main_model.pickle_input('users_1.txt', 'books_1.txt')
       main_control.handler(0)
     elif input_num == 2:
-      main_model.json_input('file_2.txt', 'books_2.txt')
+      main_model.json_input('users_2.txt', 'books_2.txt')
       main_control.handler(0)
     elif input_num == 3:
       main_model.db_input('main_db')
