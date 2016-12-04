@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Script Name   : library_mvc_v1.py
+# Script Name   : library_mvc_v2.py
 # Author        : shashial
 # Description   : Book management system using MVC + SOLID
 
@@ -20,7 +20,7 @@ db_users = {
 }
 
 class ModelInput(object):
-  """parent class for all input, defines source and destination"""
+  """parent class for all input classes, defines source"""
   def __init__(self, users, books):
     self.users = users
     self.books = books
@@ -71,9 +71,9 @@ class ModelInputDB(ModelInput):
     return (db_users, db_books)
 
 class ModelInputSourse(object):
-  """ interraction with data """
+  """ input interface """
   def input(self, num):
-    """ input interface """
+    """ loads desired information"""
     if num == 1:
       model_pickle_input = ModelInputPickle('users_1.txt', 'books_1.txt')
       self.users, self.books = (model_pickle_input.input(model_pickle_input.users, model_pickle_input.books))
