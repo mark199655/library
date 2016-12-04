@@ -20,7 +20,7 @@ db_users = {
 }
 
 class ModelInput(object):
-  """parent class for all input"""
+  """parent class for all input, defines source and destination"""
   def __init__(self, users, books):
     self.users = users
     self.books = books
@@ -47,7 +47,7 @@ class ModelInputPickle(ModelInput):
 
 class ModelInputJson(ModelInput): 
   def input(self, f_uname, f_bname):
-    ''' use json file as input '''
+    """ use json file as input """
     while True:
       try:
         users_file = open(f_uname)
@@ -66,11 +66,14 @@ class ModelInputJson(ModelInput):
     return (users, books)
 
 class ModelInputDB(ModelInput):
+  """ use database as input """
   def input(self, db_users, db_books):
     return (db_users, db_books)
 
 class ModelInputSourse(object):
+  """ interraction with data """
   def input(self, num):
+    """ input interface """
     if num == 1:
       model_pickle_input = ModelInputPickle('users_1.txt', 'books_1.txt')
       self.users, self.books = (model_pickle_input.input(model_pickle_input.users, model_pickle_input.books))
@@ -80,7 +83,9 @@ class ModelInputSourse(object):
     if num == 3:
       model_input_db = ModelInputDB(db_users, db_books)
       self.users, self.books = (model_input_db.input(model_input_db.users, model_input_db.books))
+
   def ret(self):
+    """returns loaded data"""
     return(self.users, self.books)
 
 class Model:
