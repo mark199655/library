@@ -19,6 +19,70 @@ db_users = {
 'user4':{'book15':'2016-11-15', 'book16':'2016-10-14', 'book17':'2016-10-14'}
 }
 
+class ModelInput(object):
+  """parent class for all input"""
+  def __init__(self, users, books):
+    self.users = users
+    self.books = books
+
+class ModelInputPickle(ModelInput):
+  def input(self, f_uname, f_bname):
+    ''' use pickle file as input '''
+    while True:
+      try:
+        users_file = open(f_uname, 'rb')
+        books_file = open(f_bname, 'rb')
+        break
+      except IOError:
+        print('No such file, please, try again')
+        main_control.input_handler(main_control.wait())
+
+    users = pickle.load(users_file)
+    books = pickle.load(books_file)
+
+    users_file.close()
+    books_file.close()
+
+    return (users, books)
+
+class ModelInputJson(ModelInput): 
+  def input(self, f_uname, f_bname):
+    ''' use json file as input '''
+    while True:
+      try:
+        users_file = open(f_uname)
+        books_file = open(f_bname)
+        break
+      except IOError:
+        print('No such file, please, try again')
+        main_control.input_handler(main_control.wait())
+
+    users = json.load(users_file)
+    books = json.load(books_file)
+
+    users_file.close()
+    books_file.close() 
+
+    return (users, books)
+
+class ModelInputDB(ModelInput):
+  def input(self, db_users, db_books):
+    return (db_users, db_books)
+
+class ModelInputSourse(object):
+  def input(self, num):
+    if num == 1:
+      model_pickle_input = ModelInputPickle('users_1.txt', 'books_1.txt')
+      self.users, self.books = (model_pickle_input.input(model_pickle_input.users, model_pickle_input.books))
+    if num == 2:
+      model_json_input = ModelInputJson('users_2.txt', 'books_2.txt')
+      self.users, self.books = (model_json_input.input(model_json_input.users, model_json_input.books))
+    if num == 3:
+      model_input_db = ModelInputDB(db_users, db_books)
+      self.users, self.books = (model_input_db.input(model_input_db.users, model_input_db.books))
+  def ret(self):
+    return(self.users, self.books)
+
 class Model:
   """
   model is called by controller and calls view
@@ -26,16 +90,15 @@ class Model:
   """
   def __init__(self):
     self.book_limit = 3
-    self.bookz = []
-    self.userz = {}
 
   def get_books(self):
     """get list of books"""
-    return [book for book in self.bookz]
+    return [book for book in main_input.ret()[1]]
 
   def get_users(self):
     """get list of users"""
-    return [user for user, books in self.userz.iteritems()]
+    return [user for user in main_input.ret()[0]]
+
 
   def user_exists(self, uname):
     """checks if user exists"""
@@ -56,7 +119,7 @@ class Model:
   def book_in_user(self, uname, book):
     """check if the user has the book"""
     user_books = []
-    for i,k in self.userz[uname].iteritems():
+    for i,k in main_input.ret()[0][uname].iteritems():
       user_books.append(i)
     if book in user_books:
       main_view.print_found(book)
@@ -69,15 +132,15 @@ class Model:
     main_model.user_exists(uname)
 
     #check users ammout of books taken
-    if (len(self.userz[uname])) >= main_model.book_limit:
+    if (len(main_input.ret()[0][uname])) >= main_model.book_limit:
       main_view.print_book_limit()
 
     #check if book in library
     main_model.book_in_library(book)
 
     #give a book to a user, add date
-    self.bookz.remove(book)
-    self.userz[uname][book] = str(datetime.datetime.now().date())
+    main_input.ret()[1].remove(book)
+    main_input.ret()[0][uname][book] = str(datetime.datetime.now().date())
 
     #print success message
     main_view.print_book_taken(uname, book)
@@ -91,8 +154,8 @@ class Model:
     main_model.book_in_user(uname, book)
 
     #take a book from user, add it to the library
-    self.userz[uname].pop(book)
-    self.bookz.append(book)
+    main_input.ret()[0][uname].pop(book)
+    main_input.ret()[1].append(book)
 
     #print success message
     main_view.print_book_returned(uname, book)
@@ -107,7 +170,7 @@ class Model:
     now = datetime.datetime.now().date()
 
     #check date for every book
-    for i, k in self.userz.iteritems():
+    for i, k in main_input.ret()[0].iteritems():
       for j, b in k.iteritems():
         book_time = datetime.datetime.strptime(b, "%Y-%m-%d").date()
         #if the book is expired(differens is more than 31 days) then add user to naughty list
@@ -118,44 +181,7 @@ class Model:
     #print list of user with at least 1 expired book
     main_view.print_users(ex_users)
 
-  def pickle_input(self, f_uname, f_bname):
-    ''' use pickle file as input '''
-    while True:
-      try:
-        users_file = open(f_uname, 'rb')
-        books_file = open(f_bname, 'rb')
-        break
-      except IOError:
-        print('No such file, please, try again')
-        main_control.input_handler(main_control.wait())
 
-    self.userz = pickle.load(users_file)
-    self.bookz = pickle.load(books_file)
-
-    users_file.close()
-    books_file.close()
-
-  def json_input(self, f_uname, f_bname):
-    ''' use json file as input '''
-    while True:
-      try:
-        users_file = open(f_uname)
-        books_file = open(f_bname)
-        break
-      except IOError:
-        print('No such file, please, try again')
-        main_control.input_handler(main_control.wait())
-
-    self.userz = json.load(users_file)
-    self.bookz = json.load(books_file)
-
-    users_file.close()
-    books_file.close()  
-
-  def db_input(self, dbname):
-    ''' use local "database" as input '''
-    self.bookz = db_books
-    self.userz = db_users
 
 class View:
   """iew is used to create all the output of a programm"""
@@ -228,6 +254,9 @@ class Controller:
       except EOFError:
         print("\n\nYou should exit properly next time, %username%\n")
         exit()
+      except KeyboardInterrupt:
+        print("\n\nYou should exit properly next time, %username%\n")
+        exit()        
     return action_num
 
   def handler(self, action_num):
@@ -264,13 +293,13 @@ class Controller:
     if input_num == 0:
       main_view.print_cli(main_view.input_menu)
     if input_num == 1:
-      main_model.pickle_input('users_1.txt', 'books_1.txt')
+      main_input.input(1)
       main_control.handler(0)
     elif input_num == 2:
-      main_model.json_input('users_2.txt', 'books_2.txt')
+      main_input.input(2)
       main_control.handler(0)
     elif input_num == 3:
-      main_model.db_input('main_db')
+      main_input.input(3)
       main_control.handler(0)
     elif input_num == 4:
       exit()
@@ -281,6 +310,7 @@ class Controller:
 main_view = View()
 main_control = Controller()
 main_model = Model()
+main_input = ModelInputSourse()
 
 #main: pass control to the controller
 main_view.print_about()
