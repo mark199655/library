@@ -1,5 +1,8 @@
 # MVC book management system: library
 
+library_mvc_v1.py - MVC
+
+library_mvc_v2.py - MVC + SOLID input.
 
 Library has books and users. It's rules:
 - There is only one entity of book in the system.
@@ -13,10 +16,7 @@ The task is to develop a system, which has these functions:
 - Take a book from user.
 - Print list of user with expired books.
 
-System has to be implemented using MVC 
-Part 2: add two more input variants using SOLID.
-
-SOLID:
+# SOLID:
 - Single responsibility principle
 - Open/closed principle
 - Liskov substitution principle
