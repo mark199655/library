@@ -1,8 +1,8 @@
 # MVC book management system: library
 
-'./library_mvc_v1.py' - MVC
+`./library_mvc_v1.py` - MVC
 
-'./library_mvc_v2.py' - MVC + SOLID input.
+`./library_mvc_v2.py` - MVC + SOLID input.
 
 Library has books and users. It's rules:
 - There is only one entity of book in the system.
