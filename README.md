@@ -13,4 +13,12 @@ The task is to develop a system, which has these functions:
 - Take a book from user.
 - Print list of user with expired books.
 
-System has to be implemented using MVC.
+System has to be implemented using MVC 
+Part 2: add two more input variants using SOLID.
+
+SOLID:
+- Single responsibility principle
+- Open/closed principle
+- Liskov substitution principle
+- Interface segregation principle	
+- Dependency inversion principle
